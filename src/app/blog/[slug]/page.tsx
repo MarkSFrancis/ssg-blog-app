@@ -13,14 +13,21 @@ const fakeBlogs = [
   },
 ];
 
+async function fetchBlog(slug: string) {
+  const blog = fakeBlogs.find((b) => b.slug === slug);
+  if (!blog) throw new Error(`Could not find blog: ${slug}`);
+
+  return blog;
+}
+
 export async function generateStaticParams() {
   return fakeBlogs.map((b) => ({ slug: b.slug }));
 }
 
 type Blog = (typeof fakeBlogs)[number];
 
-export default function Blog(props: { params: { slug: string } }) {
-  const blog = fakeBlogs.find((b) => b.slug === props.params.slug)!;
+export default async function Blog(props: { params: { slug: string } }) {
+  const blog = await fetchBlog(props.params.slug);
 
   return (
     <main>
